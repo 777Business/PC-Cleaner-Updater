@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vassity PC Maintenance — Open Source Windows Cleaner & Updater</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="shortcut icon" href="favicon.ico">
+  <meta name="description" content="Safe, lightweight open-source Windows cleaner and native package updater. Never touches browser autofill, logins, or passwords.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #080c14;
+      --card-bg: #0f1726;
+      --card-border: #1e293b;
+      --card-hover: #293548;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --emerald: #10b981;
+      --emerald-glow: rgba(16, 185, 129, 0.15);
+      --azure: #38bdf8;
+      --azure-glow: rgba(56, 189, 248, 0.15);
+      --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 30%, rgba(16, 185, 129, 0.06) 0%, transparent 40%);
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Navbar */
+    header {
+      padding: 24px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .nav-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+    .brand img {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-link:hover {
+      color: var(--text-main);
+    }
+    .github-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 20px;
+      color: #e2e8f0;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .github-badge:hover {
+      border-color: #38bdf8;
+      background: #1e293b;
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 80px 0 60px;
+      text-align: center;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 20px;
+      color: #34d399;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+      letter-spacing: 0.5px;
+    }
+    .hero h1 {
+      font-size: 3.2rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+      max-width: 850px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hero h1 span.gradient-text {
+      background: linear-gradient(135deg, #38bdf8 0%, #34d399 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-sub {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto 36px;
+      font-weight: 400;
+    }
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+    }
+    .btn-primary {
+      background: #10b981;
+      color: #042f2e;
+      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.25);
+    }
+    .btn-primary:hover {
+      background: #34d399;
+      transform: translateY(-2px);
+    }
+    .btn-secondary {
+      background: #111827;
+      color: #f1f5f9;
+      border: 1px solid #1f2937;
+    }
+    .btn-secondary:hover {
+      background: #1e293b;
+      border-color: #38bdf8;
+      transform: translateY(-2px);
+    }
+
+    /* Live Interactive App Preview */
+    .preview-section {
+      margin: 40px auto 80px;
+      max-width: 820px;
+    }
+    .app-window {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 14px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      overflow: hidden;
+    }
+    .window-header {
+      background: #161b22;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #21262d;
+    }
+    .dots {
+      display: flex;
+      gap: 8px;
+    }
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+    .dot.red { background: #ff5f56; }
+    .dot.yellow { background: #ffbd2e; }
+    .dot.green { background: #27c93f; }
+    .window-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #8b949e;
+      font-family: var(--font-sans);
+    }
+    .app-body {
+      padding: 24px;
+    }
+    .app-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .demo-card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 10px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 170px;
+    }
+    .demo-card h3 {
+      font-size: 1.05rem;
+      margin-bottom: 6px;
+      color: #f1f5f9;
+    }
+    .demo-card p {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      line-height: 1.4;
+      margin-bottom: 10px;
+    }
+    .demo-tag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+    .demo-tag.green { color: #34d399; }
+    .demo-tag.blue { color: #60a5fa; }
+    .demo-btn {
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      transition: opacity 0.2s;
+    }
+    .demo-btn.clean { background: #059669; color: white; }
+    .demo-btn.clean:hover { background: #10b981; }
+    .demo-btn.update { background: #2563eb; color: white; }
+    .demo-btn.update:hover { background: #3b82f6; }
+    
+    .demo-telemetry {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      color: #64748b;
+      margin-bottom: 6px;
+    }
+    .demo-progress {
+      height: 3px;
+      background: #1e293b;
+      border-radius: 2px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+    .demo-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #38bdf8;
+      transition: width 0.4s ease;
+    }
+    .demo-console {
+      background: #080c14;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 14px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: #7dd3fc;
+      height: 140px;
+      overflow-y: auto;
+      text-align: left;
+      line-height: 1.6;
+    }
+
+    /* Comparison Table */
+    .comparison-section {
+      padding: 60px 0;
+    }
+    .section-title {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .section-title h2 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .section-title p {
+      color: var(--text-muted);
+    }
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .compare-table th, .compare-table td {
+      padding: 16px 20px;
+      text-align: left;
+      border-bottom: 1px solid var(--card-border);
+      font-size: 0.95rem;
+    }
+    .compare-table th {
+      background: #161f30;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .badge-check {
+      color: #34d399;
+      font-weight: bold;
+    }
+    .badge-x {
+      color: #f87171;
+      font-weight: bold;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 40px 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+    footer a {
+      color: #38bdf8;
+      text-decoration: none;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.2rem; }
+      .app-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header>
+    <div class="container nav-wrap">
+      <a href="#" class="brand">
+        <img src="icon.png" alt="Vassity Icon">
+        <span>Vassity Cleaner</span>
+      </a>
+      <div class="nav-links">
+        <a href="#demo" class="nav-link">Interactive Demo</a>
+        <a href="#comparison" class="nav-link">Why Vassity?</a>
+        <a href="https://github.com/777Business/PC-Cleaner-Updater" target="_blank" class="github-badge">
+          <svg height="16" width="16" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+          </svg>
+          GitHub Repo
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-badge">⚡ 100% OPEN SOURCE & ZERO TELEMETRY</div>
+      <h1>The PC Cleaner That <span class="gradient-text">Never Touches</span> Your Logins.</h1>
+      <p class="hero-sub">Purges Windows temporary caches without wiping browser autofill or saved passwords. Plus silent background updates powered by Microsoft Winget.</p>
+      <div class="hero-actions">
+        <a href="https://github.com/777Business/PC-Cleaner-Updater/releases" target="_blank" class="btn btn-primary">
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+          </svg>
+          Download VassityCleaner.exe
+        </a>
+        <a href="https://github.com/777Business/PC-Cleaner-Updater" target="_blank" class="btn btn-secondary">
+          View Source on GitHub
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive App Simulation -->
+  <section class="preview-section" id="demo">
+    <div class="container">
+      <div class="app-window">
+        <div class="window-header">
+          <div class="dots">
+            <div class="dot red"></div>
+            <div class="dot yellow"></div>
+            <div class="dot green"></div>
+          </div>
+          <div class="window-title">Vassity PC Maintenance — Open Source</div>
+          <span style="font-size:0.75rem; color:#38bdf8;">v1.0 Live Preview</span>
+        </div>
+        <div class="app-body">
+          <div class="app-grid">
+            <div class="demo-card">
+              <div>
+                <h3>🧹 Safe Cache Purge</h3>
+                <p>Cleans %TEMP%, Windows Temp, Prefetch, and error crash dumps.</p>
+                <div class="demo-tag green">✓ Passwords & browser forms 100% untouched</div>
+              </div>
+              <button class="demo-btn clean" onclick="simulateClean()">Simulate Safe Clean</button>
+            </div>
+            <div class="demo-card">
+              <div>
+                <h3>🚀 Software Updater</h3>
+                <p>Bypasses buggy Windows Update via Microsoft's official Winget tool.</p>
+                <div class="demo-tag blue">✓ Silent desktop app upgrades</div>
+              </div>
+              <button class="demo-btn update" onclick="simulateUpdate()">Simulate Winget Upgrade</button>
+            </div>
+          </div>
+          <div class="demo-telemetry">
+            <span id="sim-status">● System Ready</span>
+            <span id="sim-queue"></span>
+          </div>
+          <div class="demo-progress">
+            <div class="demo-progress-bar" id="sim-bar"></div>
+          </div>
+          <div class="demo-console" id="sim-console">Ready. Click a simulation button above to preview the app in action...</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Comparison Section -->
+  <section class="comparison-section" id="comparison">
+    <div class="container">
+      <div class="section-title">
+        <h2>Built with Sovereign Engineering</h2>
+        <p>Why Vassity Cleaner is the only maintenance tool you need on Windows 10 & 11.</p>
+      </div>
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Vassity PC Cleaner</th>
+            <th>CCleaner & Generic Tools</th>
+            <th>Windows Disk Cleanup</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Preserves Browser Autofill & Passwords</strong></td>
+            <td><span class="badge-check">✓ 100% Guaranteed</span></td>
+            <td><span class="badge-x">✗ Deletes Cookies & Logins</span></td>
+            <td><span class="badge-check">✓ Safe</span></td>
+          </tr>
+          <tr>
+            <td><strong>Desktop Software Updater</strong></td>
+            <td><span class="badge-check">✓ Native Microsoft Winget</span></td>
+            <td><span class="badge-x">✗ Paywalled / Ads</span></td>
+            <td><span class="badge-x">✗ None</span></td>
+          </tr>
+          <tr>
+            <td><strong>Ads & Telemetry Tracking</strong></td>
+            <td><span class="badge-check">✓ Zero (100% Offline)</span></td>
+            <td><span class="badge-x">✗ Aggressive Ad Popups</span></td>
+            <td><span class="badge-x">✗ Windows Telemetry</span></td>
+          </tr>
+          <tr>
+            <td><strong>Standalone Executable (.exe)</strong></td>
+            <td><span class="badge-check">✓ Portable (No Install Needed)</span></td>
+            <td><span class="badge-x">✗ Heavy Background Services</span></td>
+            <td><span class="badge-check">✓ Built-in</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>© 2026 Vassity Media Ecosystem • Released under the MIT License • <a href="https://github.com/777Business/PC-Cleaner-Updater" target="_blank">GitHub Repository</a></p>
+    </div>
+  </footer>
+
+  <script>
+    function simulateClean() {
+      const consoleEl = document.getElementById('sim-console');
+      const bar = document.getElementById('sim-bar');
+      const status = document.getElementById('sim-status');
+      const queue = document.getElementById('sim-queue');
+      
+      consoleEl.innerHTML = "[CLEAN] Scanning %TEMP%, Windows Temp, Prefetch...<br>";
+      bar.style.width = "20%";
+      status.innerText = "● Scanning system temp paths...";
+      queue.innerText = "";
+
+      setTimeout(() => {
+        consoleEl.innerHTML += "  • Swept 412 cached log files from %TEMP%<br>";
+        bar.style.width = "60%";
+      }, 500);
+
+      setTimeout(() => {
+        consoleEl.innerHTML += "  • Purged Windows Prefetch & CrashDumps<br>";
+        bar.style.width = "90%";
+      }, 1000);
+
+      setTimeout(() => {
+        consoleEl.innerHTML += "<br><span style='color:#34d399;'>✓ Safely cleaned 1,482 junk files (~892 MB freed).</span><br><span style='color:#38bdf8;'>✓ All browser profiles, logins, and passwords untouched.</span>";
+        bar.style.width = "100%";
+        status.innerText = "● System Ready";
+      }, 1600);
+    }
+
+    function simulateUpdate() {
+      const consoleEl = document.getElementById('sim-console');
+      const bar = document.getElementById('sim-bar');
+      const status = document.getElementById('sim-status');
+      const queue = document.getElementById('sim-queue');
+
+      consoleEl.innerHTML = "[WINGET] Querying installed software updates...<br>";
+      bar.style.width = "15%";
+      status.innerText = "● Checking Winget packages...";
+      queue.innerText = "Queue: 1/3";
+
+      setTimeout(() => {
+        consoleEl.innerHTML += "Found 3 upgradable packages: Git, Spotify, VS Code<br>";
+        consoleEl.innerHTML += "[1/3] Upgrading Git.Git silently...<br>";
+        bar.style.width = "40%";
+        queue.innerText = "Queue: 2/3";
+      }, 700);
+
+      setTimeout(() => {
+        consoleEl.innerHTML += "  ✓ Git updated to v2.48.1<br>";
+        consoleEl.innerHTML += "[2/3] Upgrading Spotify.Spotify...<br>";
+        bar.style.width = "75%";
+        queue.innerText = "Queue: 3/3";
+      }, 1400);
+
+      setTimeout(() => {
+        consoleEl.innerHTML += "  ✓ Spotify updated<br>";
+        consoleEl.innerHTML += "<br><span style='color:#34d399;'>✓ All queued applications updated successfully!</span>";
+        bar.style.width = "100%";
+        status.innerText = "● System Ready";
+        queue.innerText = "";
+      }, 2100);
+    }
+  </script>
+</body>
+</html>

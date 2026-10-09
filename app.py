@@ -19,7 +19,7 @@ from PySide6.QtWidgets import (
     QPushButton, QLabel, QTextEdit, QProgressBar, QFrame
 )
 from PySide6.QtCore import Qt, Signal, QObject
-from PySide6.QtGui import QFont, QCursor
+from PySide6.QtGui import QFont, QCursor, QIcon
 
 class WorkerSignals(QObject):
     log = Signal(str)
@@ -33,6 +33,11 @@ class CleanerApp(QMainWindow):
         super().__init__()
         self.setWindowTitle("Vassity PC Maintenance — Open Source")
         self.setFixedSize(700, 580)
+
+        # Set Application & Window Icon
+        icon_path = Path(__file__).parent / "icon.png"
+        if icon_path.exists():
+            self.setWindowIcon(QIcon(str(icon_path)))
         self.setStyleSheet("""
             QMainWindow {
                 background-color: #0b0f17;
