@@ -2,9 +2,14 @@
 
 > A lightweight, open-source Windows maintenance utility built with Python & PySide6. Clean system caches safely and update all installed applications with zero browser tampering.
 
+[![Download VassityCleaner](https://img.shields.io/badge/Download-VassityCleaner.exe-10b981?logo=windows&logoColor=white)](https://github.com/777Business/PC-Cleaner-Updater/releases/latest/download/VassityCleaner.exe)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011-0078D6.svg)](https://microsoft.com)
 [![Open Source](https://img.shields.io/badge/Open%20Source-100%25-brightgreen.svg)]()
+
+<p align="center">
+  <img src="screenshot.png" alt="Vassity PC Maintenance App Preview" width="720">
+</p>
 
 ---
 
@@ -38,7 +43,7 @@ Most third-party PC cleaners are bloated, show intrusive ads, or dangerously wip
 
 ## 🚀 Quick Start (Pre-built Executable)
 
-1. Download the latest **`VassityCleaner.exe`** from [Releases](https://github.com/777Business/PC-Cleaner-Updater/releases).
+1. Download **`VassityCleaner.exe`** directly via [Direct Download](https://github.com/777Business/PC-Cleaner-Updater/releases/latest/download/VassityCleaner.exe) or from [Releases](https://github.com/777Business/PC-Cleaner-Updater/releases).
 2. Double-click to launch (no Python installation or command line required).
 3. Click **Clean PC Temp Junk** or **Update All Software**.
 
