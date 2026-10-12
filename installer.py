@@ -8,12 +8,13 @@ Installed Apps (Registry), and launches the application.
 
 import sys
 import os
+import time
 import shutil
 import winreg
 from pathlib import Path
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-    QPushButton, QLabel, QCheckBox, QProgressBar, QFrame
+    QPushButton, QLabel, QCheckBox, QProgressBar, QFrame, QMessageBox
 )
 from PySide6.QtCore import Qt, QThread, Signal
 from PySide6.QtGui import QFont, QCursor, QIcon
@@ -38,19 +39,22 @@ class InstallWorker(QThread):
     progress = Signal(int, str)
     finished = Signal(bool, str)
 
-    def __init__(self, create_desktop, create_startmenu, launch_app):
+    def __init__(self, create_desktop, create_startmenu):
         super().__init__()
         self.create_desktop = create_desktop
         self.create_startmenu = create_startmenu
-        self.launch_app = launch_app
 
     def run(self):
         try:
-            self.progress.emit(15, "Preparing installation directories...")
+            self.progress.emit(10, "Initializing setup environment...")
+            time.sleep(0.35)
+
             install_dir = Path(os.environ.get("LOCALAPPDATA")) / "Programs" / APP_DIR_NAME
             install_dir.mkdir(parents=True, exist_ok=True)
 
-            self.progress.emit(35, "Copying application binaries and assets...")
+            self.progress.emit(35, "Extracting application binaries and icons...")
+            time.sleep(0.45)
+
             src_exe = get_resource_path("VassityCleaner.exe")
             src_icon_ico = get_resource_path("icon.ico")
             src_icon_png = get_resource_path("icon.png")
@@ -73,7 +77,9 @@ class InstallWorker(QThread):
             if src_icon_png.exists():
                 shutil.copy2(src_icon_png, dest_png)
 
-            self.progress.emit(65, "Creating system shortcuts...")
+            self.progress.emit(65, "Creating Desktop and Start Menu shortcuts...")
+            time.sleep(0.4)
+
             shell = win32com.client.Dispatch("WScript.Shell")
 
             # Desktop Shortcut
@@ -101,6 +107,8 @@ class InstallWorker(QThread):
                 lnk.save()
 
             self.progress.emit(85, "Registering in Windows Installed Apps...")
+            time.sleep(0.35)
+
             # Create Uninstall batch script
             uninstall_bat = install_dir / "uninstall.bat"
             desktop_lnk_path = Path(os.environ.get("USERPROFILE")) / "Desktop" / f"{APP_NAME}.lnk"
@@ -134,11 +142,8 @@ del "%~f0"
             except Exception:
                 pass
 
-            self.progress.emit(100, "Installation completed successfully!")
-
-            if self.launch_app:
-                os.startfile(str(dest_exe))
-
+            self.progress.emit(100, "Installation complete!")
+            time.sleep(0.3)
             self.finished.emit(True, "Installation complete!")
         except Exception as e:
             self.finished.emit(False, str(e))
@@ -314,6 +319,7 @@ class InstallerWindow(QMainWindow):
 
     def start_install(self):
         self.btn_install.setEnabled(False)
+        self.btn_install.setText("Installing...")
         self.chk_desktop.setEnabled(False)
         self.chk_startmenu.setEnabled(False)
         self.chk_launch.setEnabled(False)
@@ -323,8 +329,7 @@ class InstallerWindow(QMainWindow):
 
         self.worker = InstallWorker(
             create_desktop=self.chk_desktop.isChecked(),
-            create_startmenu=self.chk_startmenu.isChecked(),
-            launch_app=self.chk_launch.isChecked()
+            create_startmenu=self.chk_startmenu.isChecked()
         )
         self.worker.progress.connect(self.on_progress)
         self.worker.finished.connect(self.on_finished)
@@ -339,10 +344,43 @@ class InstallerWindow(QMainWindow):
         if success:
             self.lbl_status.setText("✓ Vassity PC Maintenance has been installed successfully!")
             self.lbl_status.setStyleSheet("color: #34d399; font-size: 12px; font-weight: bold;")
-            self.btn_install.setText("Finished")
-            self.btn_install.setEnabled(True)
-            self.btn_install.clicked.disconnect()
-            self.btn_install.clicked.connect(self.close)
+
+            # Show clean pop-up notification
+            msg_box = QMessageBox(self)
+            msg_box.setWindowTitle("Installation Complete")
+            msg_box.setText("<h3>Installation Complete</h3><p>Vassity PC Maintenance has been successfully installed!</p>")
+            msg_box.setIcon(QMessageBox.Information)
+            msg_box.setStyleSheet("""
+                QMessageBox {
+                    background-color: #0b0f17;
+                }
+                QLabel {
+                    color: #f1f5f9;
+                    font-family: 'Segoe UI', sans-serif;
+                }
+                QPushButton {
+                    background-color: #10b981;
+                    color: #042f2e;
+                    font-weight: bold;
+                    border-radius: 6px;
+                    padding: 8px 18px;
+                    border: none;
+                }
+                QPushButton:hover {
+                    background-color: #34d399;
+                }
+            """)
+            msg_box.exec()
+
+            # Launch application if option is checked
+            if self.chk_launch.isChecked():
+                install_dir = Path(os.environ.get("LOCALAPPDATA")) / "Programs" / APP_DIR_NAME
+                dest_exe = install_dir / EXE_NAME
+                if dest_exe.exists():
+                    os.startfile(str(dest_exe))
+
+            # Automatically close installer tab
+            self.close()
         else:
             self.lbl_status.setText(f"❌ Error: {msg}")
             self.lbl_status.setStyleSheet("color: #f87171; font-size: 11px;")
